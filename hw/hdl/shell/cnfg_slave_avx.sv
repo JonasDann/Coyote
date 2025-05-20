@@ -532,7 +532,7 @@ always_ff @(posedge aclk) begin
 
             slv_reg[STAT_REG_1][STAT_PFAULT_OFFS+:32] <=  slv_reg[STAT_REG_1][STAT_PFAULT_OFFS+:32] + 1;
         end
-        else if(s_notify.valid & ~irq_pending) begin
+        else if(notify_irq.valid & ~irq_pending) begin
             irq_pending <= 1'b1;
             notify_irq.ready <= 1'b1;
 
@@ -588,14 +588,17 @@ always_ff @(posedge aclk) begin
                     end
                 end
 
-                ISR_REG: // ISR
+                ISR_REG: begin // ISR
                     for (int i = 0; i < AVX_DATA_BITS/8; i++) begin
                         if(s_axim_ctrl.wstrb[i]) begin
                             slv_reg[ISR_REG][(i*8)+:8] <= s_axim_ctrl.wdata[(i*8)+:8];
                         end
+                    end
 
+                    if (s_axim_ctrl.wstrb[0] == 1'b1) begin
                         invldt_post <= s_axim_ctrl.wdata[ISR_INVLDT];
                     end
+                end
 
 `ifdef EN_WB
                 WBACK_REG: // Writeback
@@ -857,7 +860,7 @@ assign rd_clear_addr = slv_reg[CTRL_REG][CTRL_PID_OFFS+:PID_BITS];
     `endif
 `endif
 
-assign m_bpss_done_rd.valid = meta_done_rd.valid;
+assign m_bpss_done_rd.valid = meta_done_rd.valid & meta_done_rd.ready;
 assign m_bpss_done_rd.data  = meta_done_rd.data;
 
 always_ff @(posedge aclk) begin
@@ -960,7 +963,7 @@ assign wr_clear_addr = slv_reg[CTRL_REG][WR_OFFS+CTRL_PID_OFFS+:PID_BITS];
     `endif
 `endif
 
-assign m_bpss_done_wr.valid = meta_done_wr.valid;
+assign m_bpss_done_wr.valid = meta_done_wr.valid & meta_done_wr.ready;
 assign m_bpss_done_wr.data  = meta_done_wr.data;
 
 always_ff @(posedge aclk) begin
@@ -1018,7 +1021,7 @@ assign invldt_rd_ctrl.data.len = slv_reg[ISR_REG][ISR_LEN_OFFS+:LEN_BITS];
 assign invldt_rd_ctrl.data.last = slv_reg[ISR_REG][ISR_INVLDT_LAST];
 
 assign invldt_wr_ctrl.valid = invldt_post;
-assign invldt_rd_ctrl.data.lock = slv_reg[ISR_REG][ISR_INVLDT_LOCK];
+assign invldt_wr_ctrl.data.lock = slv_reg[ISR_REG][ISR_INVLDT_LOCK];
 assign invldt_wr_ctrl.data.hpid = slv_reg[ISR_REG][ISR_HPID_OFFS+:HPID_BITS];
 assign invldt_wr_ctrl.data.vaddr = slv_reg[ISR_REG][ISR_VADDR_OFFS+:VADDR_BITS];
 assign invldt_wr_ctrl.data.len = slv_reg[ISR_REG][ISR_LEN_OFFS+:LEN_BITS];

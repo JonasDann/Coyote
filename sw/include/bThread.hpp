@@ -34,11 +34,11 @@
 
 #include "cSched.hpp"
 #include "cTask.hpp"
-//#include "cGpu.hpp"
+#include "cGpu.hpp"
 
 using namespace std;
 using namespace boost::interprocess;
-namespace fpga {
+namespace coyote {
 
 /* Command FIFOs */
 constexpr auto cmd_fifo_depth = cmdFifoDepth; 
@@ -67,7 +67,7 @@ protected:
     bool is_buff_attached;
 
     /* Connection */
-    int connection = { 0 };
+    int connection = { -1 };
     bool is_connected;
 
 	/* Locks */
@@ -161,9 +161,9 @@ public:
 	 * @param val : value to be written
 	 * @param offs : slave register offset
 	 */
-	inline auto setCSR(uint64_t val, uint32_t offs) { ctrl_reg[offs] = val; }
-	inline auto getCSR(uint32_t offs) { return ctrl_reg[offs]; }
-
+	void setCSR(uint64_t val, uint32_t offs);
+	uint64_t getCSR(uint32_t offs);
+	
 	/**
 	 * @brief Invoke a transfer of data 
 	 * coper - Coyote Operation (i.e. a LOCAL_WRITE or a REMOTE_RDMA_WRITE)
@@ -199,6 +199,9 @@ public:
     void connSync(bool client);
     void connClose(bool client);
 
+	void* initRDMA(uint32_t buffer_size, uint16_t port, const char* server_address = nullptr);
+	void closeRDMA();
+
     /**
 	 * @brief Getters, setters
 	 * 
@@ -218,5 +221,5 @@ public:
 
 };
 
-} /* namespace fpga */
+}
 

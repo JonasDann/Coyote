@@ -365,42 +365,4 @@ assign axis_ddr_wr.tlast = (cnt_ddr_wr == 1);
 // DEBUG
 //
 
-/* ila_retrans inst_ila_retrans (
-    .clk(aclk), 
-    .probe0(s_req_net.valid), 
-    .probe1(s_req_net.data),            // 128
-    .probe2(s_req_net.ready), 
-    .probe3(s_axis_user_req.tvalid), 
-    .probe4(s_axis_user_req.tdata),     // 512
-    .probe5(s_axis_user_req.tkeep),     // 64
-    .probe6(s_axis_user_req.tready), 
-    .probe7(s_axis_user_req.tlast), 
-    .probe8(m_axis_net.tvalid), 
-    .probe9(m_axis_net.tdata),          // 512
-    .probe10(m_axis_net.tkeep),         // 64
-    .probe11(m_axis_net.tready), 
-    .probe12(m_axis_net.tlast), 
-    .probe13(m_req_ddr_wr.valid), 
-    .probe14(m_req_ddr_wr.data),        // 128
-    .probe15(m_req_ddr_wr.ready), 
-    .probe16(m_axis_ddr.tvalid), 
-    .probe17(m_axis_ddr.tdata),         // 512
-    .probe18(m_axis_ddr.tkeep),         // 64
-    .probe19(m_axis_ddr.tready),
-    .probe20(m_axis_ddr.tlast), 
-    .probe21(seq_snk_valid), 
-    .probe22(seq_snk_ready), 
-    .probe23(rd_snk), 
-    .probe24(actv_snk),         
-    .probe25(cnt_C),                    // 26
-    .probe26(state_C),                      
-    .probe27(cnt_ddr_wr),               // 26
-    .probe28(tr_done)
-); */ 
-
-/*
-create_ip -name ila -vendor xilinx.com -library ip -version 6.2 -module_name ila_retrans
-set_property -dict [list CONFIG.C_PROBE29_WIDTH {22} CONFIG.C_PROBE23_WIDTH {28} CONFIG.C_NUM_OF_PROBES {35} CONFIG.Component_Name {ila_retrans} CONFIG.C_EN_STRG_QUAL {1} CONFIG.C_PROBE34_MU_CNT {2} CONFIG.C_PROBE33_MU_CNT {2} CONFIG.C_PROBE32_MU_CNT {2} CONFIG.C_PROBE31_MU_CNT {2} CONFIG.C_PROBE30_MU_CNT {2} CONFIG.C_PROBE29_MU_CNT {2} CONFIG.C_PROBE28_MU_CNT {2} CONFIG.C_PROBE27_MU_CNT {2} CONFIG.C_PROBE26_MU_CNT {2} CONFIG.C_PROBE25_MU_CNT {2} CONFIG.C_PROBE24_MU_CNT {2} CONFIG.C_PROBE23_MU_CNT {2} CONFIG.C_PROBE22_MU_CNT {2} CONFIG.C_PROBE21_MU_CNT {2} CONFIG.C_PROBE20_MU_CNT {2} CONFIG.C_PROBE19_MU_CNT {2} CONFIG.C_PROBE18_MU_CNT {2} CONFIG.C_PROBE17_MU_CNT {2} CONFIG.C_PROBE16_MU_CNT {2} CONFIG.C_PROBE15_MU_CNT {2} CONFIG.C_PROBE14_MU_CNT {2} CONFIG.C_PROBE13_MU_CNT {2} CONFIG.C_PROBE12_MU_CNT {2} CONFIG.C_PROBE11_MU_CNT {2} CONFIG.C_PROBE10_MU_CNT {2} CONFIG.C_PROBE9_MU_CNT {2} CONFIG.C_PROBE8_MU_CNT {2} CONFIG.C_PROBE7_MU_CNT {2} CONFIG.C_PROBE6_MU_CNT {2} CONFIG.C_PROBE5_MU_CNT {2} CONFIG.C_PROBE4_MU_CNT {2} CONFIG.C_PROBE3_MU_CNT {2} CONFIG.C_PROBE2_MU_CNT {2} CONFIG.C_PROBE1_MU_CNT {2} CONFIG.C_PROBE0_MU_CNT {2} CONFIG.ALL_PROBE_SAME_MU_CNT {2}] [get_ips ila_retrans]
-*/
- 
 endmodule
