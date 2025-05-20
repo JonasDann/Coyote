@@ -19,14 +19,15 @@
 
 # -- Project information -----------------------------------------------------
 
-project = ''
-copyright = 'Systems Group, ETH Zurich (2025)'
-author = 'Systems Group, ETH Zurich'
+project = 'Coyote-docs'
+copyright = '2025, Benjamin Ramhorst, Maximilian J. Heer, Dario Korolija'
+author = 'Benjamin Ramhorst, Maximilian J. Heer, Dario Korolija'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = 'v0.2.0'
+release = 'v1.0.0'
+
 
 # -- General configuration ---------------------------------------------------
 
