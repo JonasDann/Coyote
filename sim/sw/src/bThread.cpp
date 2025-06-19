@@ -11,7 +11,7 @@
 using namespace std;
 using namespace std::chrono;
 
-namespace fpga {
+namespace coyote {
 
 BinaryInputWriter input_writer;
 BinaryOutputReader output_reader([](void *data, uint64_t size){

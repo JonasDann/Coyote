@@ -125,7 +125,6 @@ if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 endif()
 
 # Header includes
-set(CYT_INCLUDE_PATH ${CMAKE_CURRENT_LIST_DIR}/../sw/include)
 target_include_directories(Coyote PUBLIC ${CYT_INCLUDE_PATH})
 target_link_directories(Coyote PUBLIC /usr/local/lib)
 

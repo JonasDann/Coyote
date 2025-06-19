@@ -28,7 +28,7 @@ std::string get_current_time() {
 #define DEBUG(m) { }
 #endif
 
-namespace fpga {
+namespace coyote {
 
 enum thread_ids {
     OTHER_THREAD_ID,

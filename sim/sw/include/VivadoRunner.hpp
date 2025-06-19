@@ -14,7 +14,7 @@
 
 #include "Common.hpp"
 
-namespace fpga {
+namespace coyote {
 
 class VivadoRunner {
     const char *COMMAND_PROMPT = "Vivado% "; // Command prompt string that Vivado prints on the terminal whenever it is ready for the next Tcl command

@@ -6,7 +6,7 @@
 #include "Common.hpp"
 #include "BlockingQueue.hpp"
 
-namespace fpga {
+namespace coyote {
 
 /**
  * This class handles the incoming communication from the Vivado simulation towards the software. 

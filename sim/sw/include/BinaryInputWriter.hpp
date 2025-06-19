@@ -5,7 +5,7 @@
 
 #include "Common.hpp"
 
-namespace fpga {
+namespace coyote {
 
 /**
  * This class handles the outgoing communication from the software towards the Vivado simulation. 
