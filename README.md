@@ -46,12 +46,114 @@ Additional details on **Coyote's** features and internals can be found in the [d
 
 # Getting started
 ## Prerequisites
-- **Linux**: For the basic Coyote functionality, Linux >= 5 is sufficient. Coyote has been extensively tested with Linux 5.4, Linux 5.15, Linux 6.2 and Linux 6.8.
-- **CMake**: CMake >= 3.5 with support for C++17.
-- **Vivado & Vitis**: Coyote has to be built with the full Vivado suite, including Vitis HLS. Coyote supports Vivado/Vitis HLS >= 2022.1. We have conducted extensive testing with Vivado 2022.1 and recommend this version for synthesizing Coyote (but others should work as well). All network-related Coyote configurations are built using the UltraScale+ Integrated 100G Ethernet Subsystem, for which a valid license must be obtained.
-- **FPGA**: The main target platform for the current Coyote release is the AMD Alveo U55C accelerator card. Some support and testing also exists for the older U250 and U280 platforms, which can be used in the current version of Coyote.
 
-Additional requirements for certain features (e.g. GPU peer-to-peer) are covered in the respective example covering the feature.
+Full `Vivado/Vitis` suite is needed to build the hardware side of things. Hardware server will be enough for deployment only scenarios. Coyote runs with `Vivado 2022.1`. Previous versions can be used at one's own peril.  
+
+We are currently only actively supporting the AMD `Alveo u55c` accelerator card. Our codebase offers some legacy-support for the following platforms: `vcu118`, `Alveo u50`, `Alveo u200`, `Alveo u250` and `Alveo u280`, but we are not actively working with these cards anymore. Coyote is currently being developed on the HACC cluster at ETH Zurich. For more information and possible external access check out the following link: https://systems.ethz.ch/research/data-processing-on-modern-hardware/hacc.html
+
+
+`CMake` is used for project creation. Additionally `Jinja2` template engine for Python is used for some of the code generation. The API is writen in `C++`, 17 should suffice (for now).
+
+If networking services are used, to generate the design you will need a valid [UltraScale+ Integrated 100G Ethernet Subsystem](https://www.xilinx.com/products/intellectual-property/cmac_usplus.html) license set up in `Vivado`/`Vitis`.
+
+To run the virtual machines on top of individual *vFPGAs* the following packages are needed: `qemu-kvm`, `build-essential` and `kmod`.
+
+## Quick Start
+
+Initialize the repo and all submodules:
+
+~~~~
+$ git clone --recurse-submodules https://github.com/fpgasystems/Coyote
+~~~~
+
+### Build `HW`
+
+To build an example hardware project (generate a *shell* image):
+
+~~~~
+$ mkdir build_hw && cd build_hw
+$ cmake <path_to_cmake_config> -DFDEV_NAME=<target_device>  -DEXAMPLE=<target_example>
+~~~~
+
+It's a good practice to generate the hardware-build in a subfolder of the `examples_hw`, since this already contains the cmake that needs to be referenced. In this case, the procedure would look like this: 
+
+~~~~
+$ mkdir examples_hw/build_hw && cd examples_hw/build_hw 
+$ cmake ../ -DFDEV_NAME=<target_device>  -DEXAMPLE=<target_example>
+~~~~
+
+Already implemented target-examples are specified in `examples_hw/CMakeLists.txt` and allow to build a variety of interesting design constellations, i.e. `rdma_perf` will create a RDMA-capable Coyote-NIC. 
+
+Generate all projects and compile all bitstreams:
+
+~~~~
+$ make project 
+$ make bitgen
+~~~~
+
+Since at least the initial building process takes quite some time and will normally be executed on a remote server, it makes sense to use the `nohup`-command in Linux to avoid termination of the building process if the connection to the server might be lost at some point. In this case, the build would be triggered with: 
+
+~~~~
+$ nohup make bitgen &> bitgen.log &
+~~~~
+
+With this, the building process will run in the background, and the terminal output will be streamed to the `bitgen.log` file. Therefore, the command 
+
+~~~~
+$ tail -f bitgen.log
+~~~~
+
+allows to check the current progress of the build-process. 
+
+The bitstreams will be generated under `bitstreams` directory. 
+This initial bitstream can be loaded via JTAG.
+Further custom shell bitstreams can all be loaded dynamically. 
+
+Netlist with the *official* static layer image is already provided under `hw/checkpoints`. We suggest you build your shells on top of this image.
+This default image is built with `-DEXAMPLE=static`.
+
+Additionally, a simulation project that utilizes the Coyote simulation environment may be built with:
+
+~~~
+$ make sim
+~~~
+
+### Build `SW`
+
+Provided software applications (as well as any other) can be built with the following commands:
+
+~~~~
+$ mkdir build_sw && cd build_sw
+$ cmake <path_to_cmake_config>
+$ make
+~~~~
+
+Similar to building the HW, it makes sense to build within the `examples_sw` directory for direct access to the provided `CMakeLists.txt`: 
+
+~~~~
+$ mkdir examples_sw/build_sw && cd examples_sw/build_sw 
+$ cmake ../ -DEXAMPLE=<target_example> -DVERBOSITY=<ON or OFF>
+$ make
+~~~~
+
+The software-stack can be built in verbosity-mode, which will generate extensive printouts during execution. This is controlled via the `VERBOSITY` toggle in the cmake-call. Per default, verbosity is turned off.  
+
+There is also a simulation target that the software may be built against by adding `-DSIM_DIR=<path_to_sim_build_dir>` to the cmake-call. The path to the simulation directory has to point to a hardware build directory where `make sim` has been executed to prepare the simulation project. An extensive documentation can be found in the `sim` directory.
+
+### Build `Driver`
+
+After the bitstream is loaded, the driver can be inserted once for the initial static image.
+
+~~~~
+$ cd driver && make
+$ insmod coyote_drv.ko <any_additional_args>
+~~~~
+
+### Provided examples
+Coyote already comes with a number of pre-configured example applications that can be used to test the shell-capabilities and systems performance or start own developments around networking or memory offloading. 
+These existing example apps are currently available (documentation can be found in the respective ./examples_sw/\<example> directories): kmeans, multithreading, perf_fpga, perf_local, rdma_service, reconfigure_shell, streaming_service, tcp_iperf.
+There is always a pair of directories in ./examples_hw and ./examples_sw that belong together.
+The hardware side contains vFPGA code which the software side interacts with through the Coyote-provided functions.
 
 ## Download
 Clone the repo and all its submodules:

@@ -163,7 +163,7 @@ public:
 	 */
 	void setCSR(uint64_t val, uint32_t offs);
 	uint64_t getCSR(uint32_t offs);
-	
+
 	/**
 	 * @brief Invoke a transfer of data 
 	 * coper - Coyote Operation (i.e. a LOCAL_WRITE or a REMOTE_RDMA_WRITE)
