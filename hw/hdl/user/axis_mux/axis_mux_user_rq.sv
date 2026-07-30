@@ -56,7 +56,10 @@ typedef enum logic[1:0]  {ST_IDLE, ST_MUX_RESP, ST_MUX_RECV} state_t;
 logic [1:0] state_C, state_N;
 
 // -- Internal regs
-logic [N_DESTS_BITS-1:0] dest_C, dest_N;
+// Full rq dest width, NOT clog2(N_DESTS): an out-of-range dest (e.g. the RoCE stack's
+// poisoned no-entry laddr, dest 0xF) must stay representable so it can be sunk below
+// instead of aliasing onto a real stream.
+logic [DEST_BITS-1:0] dest_C, dest_N;
 logic [BLEN_BITS-1:0] cnt_C, cnt_N;
 logic [PID_BITS-1:0] pid_C, pid_N;
 
@@ -65,7 +68,6 @@ logic tr_done;
 logic resp;
 
 metaIntf #(.STYPE(req_t)) m_rq_int (.*);
-metaIntf #(.STYPE(logic[1+BLEN_BITS-1:0])) mux [N_DESTS] (.*);
 
 // ----------------------------------------------------------------------------------------------------------------------- 
 // IO
@@ -141,10 +143,15 @@ always_comb begin
         end
     end
 
-    if(dest_C < N_DESTS && state_C == ST_MUX_RESP) 
+    if(dest_C < N_DESTS && state_C == ST_MUX_RESP)
         s_axis_tready = m_axis_resp_tready[dest_C];
     else if(dest_C < N_DESTS && state_C == ST_MUX_RECV)
         s_axis_tready = m_axis_recv_tready[dest_C];
+    else if(state_C == ST_MUX_RESP || state_C == ST_MUX_RECV)
+        // Out-of-range dest: the data is undeliverable, so sink the beats (no output
+        // valid is asserted above). Stalling here instead would wedge the shared RX
+        // stream and, through it, the un-stallable network ingress.
+        s_axis_tready = 1'b1;
     else
         s_axis_tready = 1'b0;
 end
