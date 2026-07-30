@@ -248,3 +248,17 @@ eval $cmd
 create_ip -name axis_data_fifo -vendor xilinx.com -library ip -version 2.0 -module_name axisr_data_fifo_512
 set cmd "set_property -dict \[list CONFIG.TDATA_NUM_BYTES {64} CONFIG.FIFO_DEPTH {$nn512} CONFIG.HAS_TKEEP {1} CONFIG.HAS_TLAST {1}  CONFIG.TID_WIDTH {6}] \[get_ips axisr_data_fifo_512]"
 eval $cmd
+
+# Per-dest RDMA read-response FIFO (remote_credits_rd inst_resp_cq only). Sized to
+# rd_resp_mult max-size single reads (RDMA_MAX_SINGLE_READ = n_outs * pmtu with the
+# default config) so dreq_credits_rd can pipeline full-size reads instead of
+# serializing on the drain of the previous one. Built in URAM: the URAM288 primitive
+# is fixed at 4096 deep, so any depth up to 4096 costs the same 9 URAMs for the
+# ~583-bit payload — with the default 512-beat base depth, mult 8 hits 4096 exactly.
+# Must stay in sync with RD_RESP_FIFO_MULT/FIFO_BEATS in
+# hw/hdl/user/credits/dreq_credits_rd.sv.
+set rd_resp_mult 8
+set nn512_rd_resp [expr {$rd_resp_mult * $nn512}]
+create_ip -name axis_data_fifo -vendor xilinx.com -library ip -version 2.0 -module_name axisr_data_fifo_512_rd_resp
+set cmd "set_property -dict \[list CONFIG.TDATA_NUM_BYTES {64} CONFIG.FIFO_DEPTH {$nn512_rd_resp} CONFIG.FIFO_MEMORY_TYPE {ultra} CONFIG.HAS_TKEEP {1} CONFIG.HAS_TLAST {1}  CONFIG.TID_WIDTH {6}] \[get_ips axisr_data_fifo_512_rd_resp]"
+eval $cmd

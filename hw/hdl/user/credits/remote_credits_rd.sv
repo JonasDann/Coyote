@@ -90,7 +90,11 @@ module remote_credits_rd #(
     );
 
     for(genvar i = 0; i < N_DESTS; i++) begin
-        axisr_data_fifo_512 inst_resp_cq (
+        // URAM-based and deeper than the generic axisr_data_fifo_512: holds
+        // RD_RESP_FIFO_MULT (8) max-size single reads so dreq_credits_rd can pipeline
+        // full-size reads instead of serializing on the previous one's drain. Its
+        // depth must match FIFO_BEATS in dreq_credits_rd.
+        axisr_data_fifo_512_rd_resp inst_resp_cq (
             .s_axis_aresetn(aresetn),
             .s_axis_aclk(aclk),
             .s_axis_tvalid(axis_resp_int[i].tvalid),
