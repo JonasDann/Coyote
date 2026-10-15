@@ -117,7 +117,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p><strong>Linux</strong>: For the basic Coyote functionality, Linux &gt;= 5 is sufficient. We have extensively tested Coyote with Linux 5.4, Linux 5.15, Linux 6.2 and Linux 6.8.</p></li>
-<li><p><strong>CMake</strong>: <em>CMake</em> &gt;= 3.5 with support for <em>C++17</em></p></li>
+<li><p><strong>CMake</strong>: <em>CMake</em> &gt;= 3.16 with support for <em>C++17</em></p></li>
 <li><p><strong>Vivado/Vitis</strong>: Coyote has to be built with the full Vivado suite, including Vitis HLS. Coyote supports Vivado/Vitis HLS &gt;= 2022.1. On the V80, we recommend using Vivado 2024.2 or newer.
 All network-related Coyote configurations are built using the UltraScale+ Integrated 100G Ethernet Subsystem, for which a valid license must be obtained.</p></li>
 <li><p><strong>Hugepages enabled</strong></p></li>
@@ -128,7 +128,7 @@ All network-related Coyote configurations are built using the UltraScale+ Integr
 <li><p>Hardware:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><strong>FPGA</strong>: Coyote currently supports the AMD Alveo U55C, U280, U250, and, more recently, the V80 (though currently without networking).</p></li>
+<li><p><strong>FPGA</strong>: Coyote currently supports the AMD Alveo U55C, U280, U250, U200, and, more recently, the V80 (though currently without networking).</p></li>
 <li><p><strong>GPU</strong>: For GPU peer-to-peer (P2P) support, Coyote currently supports AMD Instinct Accelerator cards. We extensively tested P2P functionality on AMD Instinct MI100 and MI210.</p></li>
 </ul>
 </div></blockquote>
@@ -185,7 +185,7 @@ The following layers, each represented by an independent Vivado project, exist:<
 </li>
 </ol>
 <p>To build the hardware, one should provide a configuration via <em>CMake</em>. The following is an example project configuration:</p>
-<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">3.5</span><span class="p">)</span>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">3.16</span><span class="p">)</span>
 <span class="nb">project</span><span class="p">(</span><span class="s">example_prj</span><span class="p">)</span>
 
 <span class="w"> </span><span class="c"># Path to Coyote directory</span>
@@ -335,7 +335,7 @@ All of these will be present in the <cite>bitstreams</cite> directory.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Alveo U55C, U280 and U250 are UltraScale+ devices, and the V80 is a Versal device.</p>
+<p>Alveo U55C, U280, U250 and U200 are UltraScale+ devices, and the V80 is a Versal device.</p>
 </div>
 </section>
 <section id="building-the-software">
